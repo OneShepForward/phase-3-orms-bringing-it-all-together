@@ -28,7 +28,7 @@ class Dog
         DB[:conn].execute(sql)
     end
 
-    def self.save
+    def save
         if self.id
             self.update
         else
@@ -44,21 +44,51 @@ class Dog
         self
     end
 
-    # def self.create
-    #     self.save
-    # end
+    def self.create(name:, breed:)
+        doggo = Dog.new(name: name, breed: breed)
+        doggo.save
+    end
 
-    # def self.all
+    def self.new_from_db(row)
+        self.new(id: row[0], name: row[1], breed: row[2])
+    end
 
-    # end
 
-    # def self.find_by_name(name)
+    def self.all
+        sql = <<-SQL
+        SELECT * 
+        FROM dogs
+        SQL
 
-    # end
+        DB[:conn].execute(sql).map do |item|
+            puts item
+            self.new_from_db(item)
+        end
+    end
 
-    # def self.find(id)
+    def self.find_by_name(name)
+        sql = <<-SQL
+        SELECT *
+        FROM dogs
+        WHERE name = ?
+        SQL
 
-    # end
+        DB[:conn].execute(sql, name).map do |row|
+            self.new_from_db(row)
+        end.first
+        end
+
+    def self.find(id)
+        sql = <<-SQL
+        SELECT id
+        FROM dogs
+        SQL
+
+        DB[:conn].execute(sql, id).map do |row|
+            self.new_from_db(row)
+        end.first
+
+    end
 
     def self.update
     end
