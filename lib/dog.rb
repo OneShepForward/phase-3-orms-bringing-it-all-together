@@ -80,8 +80,9 @@ class Dog
 
     def self.find(id)
         sql = <<-SQL
-        SELECT id
+        SELECT *
         FROM dogs
+        WHERE dogs.id = ?
         SQL
 
         DB[:conn].execute(sql, id).map do |row|
